@@ -1,5 +1,6 @@
 import {getAllProduct, getProductById} from "../services/products.js";
 import mongoose from "mongoose";
+import {createHttpError} from "../utils/create-http-error.js";
 
 export const getProductController = async (req, res) => {
     const products = await getAllProduct();
@@ -13,19 +14,13 @@ export const getProductByIdController = async (req, res, next) => {
   const {productId} = req.params;
 
     if (!mongoose.isValidObjectId(productId)) {
-        const error = new Error('Invalid product id');
-        error.status = 400;
-        next(error);
-        return;
+        return next(createHttpError(400, "Invalid product id"));
     }
 
   const product = await getProductById(productId);
 
     if (!product) {
-        const error = new Error('Product not found');
-        error.status = 404;
-        next(error);
-        return;
+        return next(createHttpError(404, 'Product not found'));
     }
 
     res.json({
