@@ -31,7 +31,7 @@
 - [x] Перевірити, що всі error responses повертаються у JSON
 - [x] Перевірити всі базові статуси:
   - [x] `200 OK`
-  - [ ] `201 Created`
+  - [x] `201 Created`
   - [x] `400 Bad Request`
   - [ ] `401 Unauthorized`
   - [ ] `403 Forbidden`
