@@ -1,4 +1,4 @@
-import {getAllOrders} from "../services/orders.js";
+import {getAllOrders, getClientById} from "../services/orders.js";
 import {getIncomeExpenses} from "../services/income-expenses.js";
 import {getSuppliers} from "../services/suppliers.js";
 import {getAllProduct} from "../services/products.js";
@@ -20,4 +20,18 @@ export const getAllStatisticsController = async (req, res) => {
             customers: customers,
         },
     });
-}
+};
+
+export const getClientGoodsController = async (req, res) => {
+    const {clientId} = req.params;
+
+    const data = await getClientById(clientId);
+
+    if (!data) {
+        throw createHttpError(404, "Order not found");
+    }
+
+    res.status(200).json({
+        data,
+    });
+};
