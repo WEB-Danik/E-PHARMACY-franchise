@@ -4,6 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import {getEnvVar} from "./utils/getEnvVar.js";
 import productRouter from "./routes/products.js";
+import statisticsRouter from "./routes/statistics.js";
+
 
 export const app = express();
 
@@ -33,6 +35,7 @@ export const startServer = () => {
     });
 
     app.use('/api/shop/:shopId', productRouter);
+    app.use('/api', statisticsRouter);
 
     app.use((req, res) => {
         res.status(404).json({
