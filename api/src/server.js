@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import {getEnvVar} from "./utils/getEnvVar.js";
 import productRouter from "./routes/products.js";
 import statisticsRouter from "./routes/statistics.js";
+import shopRouter from "./routes/shop.js";
 
 
 export const app = express();
@@ -34,6 +35,7 @@ export const startServer = () => {
         });
     });
 
+    app.use('/api', shopRouter);
     app.use('/api/shop/:shopId', productRouter);
     app.use('/api', statisticsRouter);
 
