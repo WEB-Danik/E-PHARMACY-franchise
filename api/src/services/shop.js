@@ -18,6 +18,7 @@ export const putShop = async (shopId, payload, options) => {
         {
             new: true,
             includeResultMetadata: true,
+            runValidators: true,
             ...options,
         },
     );

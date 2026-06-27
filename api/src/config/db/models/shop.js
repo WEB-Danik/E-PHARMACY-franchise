@@ -17,15 +17,15 @@ const shopSchema = new mongoose.Schema({
         },
         email: {
             type: String,
-            required: [true, 'Email is required'],
+            required: [true, "Email is required"],
             unique: true,
             trim: true,
             lowercase: true,
-            minlength: [5, 'Email is too short'],
-            maxlength: [254, 'Email is too long'],
+            minlength: [5, "Email is too short"],
+            maxlength: [254, "Email is too long"],
             match: [
                 /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/,
-                'Invalid email format',
+                "Invalid email format",
             ],
             index: true,
         },
@@ -35,8 +35,8 @@ const shopSchema = new mongoose.Schema({
             trim: true,
             minlength: 5,
             match: [
-                /^[\p{L}\d\s.,'’№\/-]+$/u,
-                'Invalid address',
+                /^[\p{L}\d\s.,'/-]+$/u,
+                "Invalid address",
             ],
         },
         city: {
@@ -46,17 +46,17 @@ const shopSchema = new mongoose.Schema({
         },
         postalIndex: {
             type: String,
-            required: [true, 'Postal index is required'],
+            required: [true, "Postal index is required"],
             trim: true,
-            match: [/^\d{5}$/, 'Postal index must contain exactly 5 digits'],
+            match: [/^\d{5}$/, "Postal index must contain exactly 5 digits"],
         },
         phone: {
             type: String,
-            required: [true, 'Phone is required'],
+            required: [true, "Phone is required"],
             trim: true,
             match: [
                 /^\+?[0-9]{10,15}$/,
-                'Invalid phone number',
+                "Invalid phone number",
             ],
         },
         rating: {
@@ -72,21 +72,20 @@ const shopSchema = new mongoose.Schema({
     }
 );
 
-shopSchema.post('save', async function(doc) {
+shopSchema.post("save", async function (doc) {
     try {
-        await pharmaciesCollection.create(
-            { shopId: doc._id },
-            {
+        await pharmaciesCollection.create({
+            shopId: doc._id,
             name: doc.name,
             address: doc.address,
             city: doc.city,
             phone: doc.phone,
-            rating: doc.rating
+            rating: doc.rating,
         });
-        console.log(`Магазин "${doc.name}" автоматично скопійовано в колекцію pharmacies!`);
+        console.log(`Shop "${doc.name}" copied to pharmacies collection.`);
     } catch (error) {
-        console.error("Не вдалося автоматично скопіювати в pharmacies:", error);
+        console.error("Failed to copy shop to pharmacies:", error);
     }
 });
 
-export const shopCollection = mongoose.model('shop', shopSchema);
+export const shopCollection = mongoose.model("shop", shopSchema);

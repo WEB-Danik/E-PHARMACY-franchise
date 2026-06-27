@@ -1,6 +1,12 @@
 import {model, Schema} from "mongoose";
 
 const productSchema = new Schema({
+        shopId: {
+            type: Schema.Types.ObjectId,
+            ref: "shop",
+            required: true,
+            index: true,
+        },
         id: {
             type: String,
             required: true,
@@ -19,12 +25,14 @@ const productSchema = new Schema({
             required: true,
         },
         stock: {
-            type: String,
+            type: Number,
             required: true,
+            min: 0,
         },
         price: {
-            type: String,
+            type: Number,
             required: true,
+            min: 0,
         },
         category: {
             type: String,

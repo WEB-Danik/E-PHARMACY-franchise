@@ -1,14 +1,23 @@
 import {getShopById, postShop, putShop} from "../services/shop.js";
 import {createHttpError} from "../utils/create-http-error.js";
+import mongoose from "mongoose";
 
-export const getShopByIdController = async (req, res) => {
+export const getShopByIdController = async (req, res, next) => {
     const {shopId} = req.params;
+
+    if (!mongoose.isValidObjectId(shopId)) {
+        return next(createHttpError(400, "Invalid shop id"));
+    }
 
     const shop = await getShopById(shopId);
 
+    if (!shop) {
+        return next(createHttpError(404, "Shop not found"));
+    }
+
     res.json({
         status: 200,
-        message: `Successfully found product with id ${shopId}!`,
+        message: `Successfully found shop with id ${shopId}!`,
         data: shop,
     });
 };
@@ -26,6 +35,10 @@ export const createShopController = async (req, res) => {
 export const updateShopController = async (req, res, next) => {
     const {shopId} = req.params;
 
+    if (!mongoose.isValidObjectId(shopId)) {
+        return next(createHttpError(400, "Invalid shop id"));
+    }
+
     const result = await putShop(shopId, req.body, {upsert: true});
 
     if (!result) {
@@ -37,7 +50,7 @@ export const updateShopController = async (req, res, next) => {
 
     res.status(status).json({
         status,
-        message: `Successfully upserted a product!`,
+        message: `Successfully upserted a shop!`,
         data: result,
     });
 };

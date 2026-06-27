@@ -1,10 +1,22 @@
 import {deleteProduct, getAllProduct, getProductById, postProduct, putProduct} from "../services/products.js";
 import mongoose from "mongoose";
 import {createHttpError} from "../utils/create-http-error.js";
-import products from "../routes/products.js";
 
-export const getProductController = async (req, res) => {
-    const products = await getAllProduct();
+const validateObjectId = (id, name, next) => {
+    if (!mongoose.isValidObjectId(id)) {
+        next(createHttpError(400, `Invalid ${name}`));
+        return false;
+    }
+
+    return true;
+};
+
+export const getProductController = async (req, res, next) => {
+    const {shopId} = req.params;
+
+    if (!validateObjectId(shopId, "shop id", next)) return;
+
+    const products = await getAllProduct(shopId);
 
     res.status(200).json({
         data: products,
@@ -12,13 +24,12 @@ export const getProductController = async (req, res) => {
 };
 
 export const getProductByIdController = async (req, res, next) => {
-  const {productId} = req.params;
+    const {shopId, productId} = req.params;
 
-    if (!mongoose.isValidObjectId(productId)) {
-        return next(createHttpError(400, "Invalid product id"));
-    }
+    if (!validateObjectId(shopId, "shop id", next)) return;
+    if (!validateObjectId(productId, "product id", next)) return;
 
-  const product = await getProductById(productId);
+    const product = await getProductById(shopId, productId);
 
     if (!product) {
         return next(createHttpError(404, 'Product not found'));
@@ -32,15 +43,18 @@ export const getProductByIdController = async (req, res, next) => {
 };
 
 export const postProductController = async (req, res, next) => {
-    const { photo, name, suppliers, stock, price, category } = req.body;
+    const {shopId} = req.params;
+    const {photo, name, suppliers, stock, price, category} = req.body;
+
+    if (!validateObjectId(shopId, "shop id", next)) return;
 
     const missingFields = [];
 
     if (!photo) missingFields.push("photo");
     if (!name) missingFields.push("name");
     if (!suppliers) missingFields.push("suppliers");
-    if (!stock) missingFields.push("stock");
-    if (!price) missingFields.push("price");
+    if (stock === undefined || stock === null) missingFields.push("stock");
+    if (price === undefined || price === null) missingFields.push("price");
     if (!category) missingFields.push("category");
 
     if (missingFields.length > 0) {
@@ -52,7 +66,7 @@ export const postProductController = async (req, res, next) => {
         );
     }
 
-    const product = await postProduct(req.body);
+    const product = await postProduct(shopId, req.body);
 
     res.status(201).json({
         status: 201,
@@ -62,9 +76,12 @@ export const postProductController = async (req, res, next) => {
 };
 
 export const upsertProductController = async (req, res, next) => {
-    const { productId } = req.params;
+    const {shopId, productId} = req.params;
 
-    const result = await putProduct(productId, req.body, {upsert: true});
+    if (!validateObjectId(shopId, "shop id", next)) return;
+    if (!validateObjectId(productId, "product id", next)) return;
+
+    const result = await putProduct(shopId, productId, req.body, {upsert: true});
 
     if (!result) {
         next(createHttpError(404, 'Product not found'));
@@ -82,9 +99,12 @@ export const upsertProductController = async (req, res, next) => {
 };
 
 export const deleteProductController = async (req, res, next) => {
-    const { productId } = req.params;
+    const {shopId, productId} = req.params;
 
-    const product = await deleteProduct(productId);
+    if (!validateObjectId(shopId, "shop id", next)) return;
+    if (!validateObjectId(productId, "product id", next)) return;
+
+    const product = await deleteProduct(shopId, productId);
 
     if (!product) {
         return next(createHttpError(404, 'Product not found'));

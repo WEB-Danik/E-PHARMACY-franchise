@@ -17,23 +17,23 @@ const ordersSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        match: [/^\s*[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}\s*$/, 'Будь ласка, вкажіть коректний email']
+        match: [/^\s*[\w.-]+@([\w-]+\.)+[\w-]{2,4}\s*$/, "Invalid email"]
     },
     products: {
-        type: String, // Оскільки в JSON значення в лапках "12"
+        type: String,
         required: true
     },
     price: {
-        type: String, // Оскільки в JSON значення в лапках "890.66"
+        type: String,
         required: true
     },
     status: {
         type: String,
         required: true,
-        enum: ['Pending', 'Processing', 'Confirmed', 'Shipped', 'Delivered', 'Completed', 'Cancelled'] // Додано валідацію статусів з ваших прикладів
+        enum: ["Pending", "Processing", "Confirmed", "Shipped", "Delivered", "Completed", "Cancelled"]
     },
     order_date: {
-        type: String, // Оскільки дата записана рядком "July 31, 2023"
+        type: String,
         required: true
     }
 }, {

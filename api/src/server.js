@@ -46,6 +46,8 @@ export const startServer = () => {
     });
 
     app.use((err, req, res, next) => {
+        void next;
+
         const statusCode = err.status || 500;
 
         res.status(statusCode).json({
